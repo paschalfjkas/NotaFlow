@@ -19,6 +19,25 @@ export type ReportRow = {
   updated_at: string;
 };
 
+// Migrates rows saved before `technologies` became { name, notes }[] instead
+// of a flat string[] — without this, an older draft/failed report would feed
+// `undefined` names into the tag input and the AI context.
+export function normalizeReportData(raw: ReportData): ReportData {
+  const techs = raw.technologies?.technologies;
+  if (!Array.isArray(techs) || techs.length === 0 || typeof techs[0] !== "string") return raw;
+  return {
+    ...raw,
+    technologies: {
+      ...raw.technologies,
+      technologies: (techs as unknown as string[]).map((name) => ({ name, notes: "" })),
+    },
+  };
+}
+
+function normalizeRow(row: Record<string, unknown>): ReportRow {
+  return { ...row, report_data: normalizeReportData(row.report_data as ReportData) } as ReportRow;
+}
+
 /**
  * Resumes the user's most recent draft report, or creates a new one. Used by
  * the /generate entry route so "Start New Report" never orphans an
@@ -36,7 +55,7 @@ export async function getOrCreateDraftReport(userId: string): Promise<ReportRow>
     .limit(1)
     .maybeSingle();
 
-  if (existing) return existing as ReportRow;
+  if (existing) return normalizeRow(existing);
 
   const { data: created, error } = await supabase
     .from("reports")
@@ -60,7 +79,7 @@ export async function getReportForUser(userId: string, reportId: string): Promis
 
   if (error) throw error;
   if (!data) notFound();
-  return data as ReportRow;
+  return normalizeRow(data);
 }
 
 export async function getLatestDraftReport(userId: string): Promise<ReportRow | null> {
@@ -74,5 +93,5 @@ export async function getLatestDraftReport(userId: string): Promise<ReportRow | 
     .limit(1)
     .maybeSingle();
 
-  return (data as ReportRow) ?? null;
+  return data ? normalizeRow(data) : null;
 }

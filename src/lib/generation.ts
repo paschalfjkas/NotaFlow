@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { consumeReportCredit, refundReportCredit } from "@/lib/credits";
 import { generateReport } from "@/lib/ai/pipeline";
 import { buildSectionRows } from "@/lib/ai/section-rows";
+import { normalizeReportData } from "@/lib/reports";
 import type { ReportData } from "@/lib/validation/wizard";
 import type { CreditSource } from "@/types/database";
 
@@ -55,7 +56,8 @@ export async function runGeneration(reportId: string, userId: string): Promise<v
     .eq("id", reportId);
 
   try {
-    const result = await generateReport(report.report_data as ReportData, async (stage) => {
+    const reportData = normalizeReportData(report.report_data as ReportData);
+    const result = await generateReport(reportData, async (stage) => {
       await supabase.from("reports").update({ generation_stage: stage }).eq("id", reportId);
     });
 

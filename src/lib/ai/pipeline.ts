@@ -107,7 +107,7 @@ export async function generateReport(
   // to omit any URL it isn't sure of rather than guess). Skipped entirely —
   // falling back to the manual placeholder in build-report.ts — when the
   // student opted out or listed no technologies to cite.
-  const technologies = reportData.technologies?.technologies ?? [];
+  const technologies = (reportData.technologies?.technologies ?? []).map((t) => t.name);
   const includeReferences = reportData.preferences?.includeReferences !== false;
   let references: GeneratedReference[] = [];
   if (includeReferences && technologies.length > 0) {

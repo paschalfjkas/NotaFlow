@@ -170,8 +170,8 @@ export default async function ReviewPage({
                 <span className="text-sm text-muted-foreground">None selected</span>
               )}
               {(data.technologies?.technologies ?? []).map((t) => (
-                <Badge key={t} variant="secondary">
-                  {t}
+                <Badge key={t.name} variant="secondary" title={t.notes || undefined}>
+                  {t.name}
                 </Badge>
               ))}
             </div>

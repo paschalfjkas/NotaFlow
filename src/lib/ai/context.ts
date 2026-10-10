@@ -1,4 +1,4 @@
-import type { ReportData } from "@/lib/validation/wizard";
+import type { ReportData, TechnologyEntry } from "@/lib/validation/wizard";
 import {
   REPORT_LENGTH_LABELS,
   WRITING_STYLE_LABELS,
@@ -13,6 +13,15 @@ function fact(value: string | undefined | null): string {
 
 function list(values: string[] | undefined): string {
   return values && values.length > 0 ? values.join(", ") : "Not provided";
+}
+
+// One line per technology so any usage notes stay attached to the right
+// item — a flat comma list can't carry that association once it's long.
+function technologiesList(entries: TechnologyEntry[] | undefined): string {
+  if (!entries || entries.length === 0) return "Not provided";
+  return entries
+    .map((e) => (e.notes.trim() ? `- ${e.name} — used for: ${e.notes.trim()}` : `- ${e.name}`))
+    .join("\n  ");
 }
 
 /**
@@ -80,7 +89,7 @@ TASKS PERFORMED
   ${list(experience?.tasks)}
 
 TOOLS AND TECHNOLOGIES USED
-  ${list(technologies?.technologies)}
+  ${technologiesList(technologies?.technologies)}
 
 CHALLENGES AND LEARNING
   Biggest challenge: ${fact(challenges?.biggestChallenge)}

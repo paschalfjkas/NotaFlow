@@ -121,8 +121,17 @@ export const TASK_OPTIONS = [
 // ---------------------------------------------------------------------------
 // Step 5 — Tools and Technologies
 // ---------------------------------------------------------------------------
+export const technologyEntrySchema = z.object({
+  name: z.string().trim().min(1),
+  // Short, optional write-up of what the student actually used this tool for
+  // — fed into the AI context so generated chapters can describe real usage
+  // instead of a generic one-liner about the tool.
+  notes: text,
+});
+export type TechnologyEntry = z.infer<typeof technologyEntrySchema>;
+
 export const technologiesSchema = z.object({
-  technologies: z.array(z.string()),
+  technologies: z.array(technologyEntrySchema),
 });
 export type TechnologiesInfo = z.infer<typeof technologiesSchema>;
 

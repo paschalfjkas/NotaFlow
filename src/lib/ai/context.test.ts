@@ -34,10 +34,34 @@ describe("buildReportContext (anti-fabrication context assembly)", () => {
     expect(context).toContain("Builds payment infrastructure");
   });
 
-  it("joins tools and technologies into a comma-separated list", () => {
-    const data: ReportData = { technologies: { technologies: ["React", "Node.js", "PostgreSQL"] } };
+  it("lists tools and technologies one per line", () => {
+    const data: ReportData = {
+      technologies: {
+        technologies: [
+          { name: "React", notes: "" },
+          { name: "Node.js", notes: "" },
+          { name: "PostgreSQL", notes: "" },
+        ],
+      },
+    };
     const context = buildReportContext(data);
-    expect(context).toContain("React, Node.js, PostgreSQL");
+    expect(context).toContain("- React");
+    expect(context).toContain("- Node.js");
+    expect(context).toContain("- PostgreSQL");
+  });
+
+  it("includes a technology's usage notes so the AI can write specifics", () => {
+    const data: ReportData = {
+      technologies: {
+        technologies: [
+          { name: "Excel", notes: "Used to reconcile daily sales records across branches" },
+        ],
+      },
+    };
+    const context = buildReportContext(data);
+    expect(context).toContain(
+      "- Excel — used for: Used to reconcile daily sales records across branches"
+    );
   });
 
   it("reports no technologies as 'Not provided', not an empty list", () => {
