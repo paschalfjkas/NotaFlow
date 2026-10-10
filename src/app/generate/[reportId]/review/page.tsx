@@ -15,6 +15,13 @@ import { Badge } from "@/components/ui/badge";
 import { GenerateButton } from "@/components/forms/wizard/generate-button";
 
 export const instant = false;
+// Report generation runs as a Server Action invoked from this page (see
+// GenerateButton) and makes ~7 sequential AI calls with retry backoff —
+// normally 30s-2min, but can run longer under heavy rate-limiting/retries.
+// Explicit rather than relying on the platform default: matches Vercel
+// Hobby's actual ceiling (300s); bump this (and your plan) if you see
+// generation time out under load — Pro allows up to 800s.
+export const maxDuration = 300;
 
 function SummaryCard({
   title,
