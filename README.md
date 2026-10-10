@@ -264,8 +264,18 @@ API Keys & Webhooks → `https://<your-domain>/api/paystack/webhook`, and switch
 non-admins before the page even renders, and every admin page/action re-checks via
 `requireAdmin()` (`src/lib/admin.ts`) — the same defense-in-depth pattern as
 `requireUser()`, since middleware alone is one mistake away from a route slipping
-through ungated. There's no self-serve way to become an admin (by design); promote a
-user with one `update` in the Supabase SQL Editor:
+through ungated. There's no self-serve way to become an admin (by design) — it still
+requires possessing `SUPABASE_SERVICE_ROLE_KEY`, the same trust boundary as the
+Supabase SQL Editor. Use the CLI helper (`scripts/manage-admin.mjs`), which validates
+the account exists before touching it:
+
+```bash
+npm run admin -- promote you@example.com
+npm run admin -- revoke you@example.com
+npm run admin -- list
+```
+
+Or, equivalently, a raw `update` in the Supabase SQL Editor:
 
 ```sql
 update public.profiles set role = 'admin' where email = 'you@example.com';
