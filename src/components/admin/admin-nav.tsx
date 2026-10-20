@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CreditCard, FileText, LayoutDashboard, LogOut, Tags, Users } from "lucide-react";
+import { Banknote, CreditCard, FileText, LayoutDashboard, LogOut, Tags, Users } from "lucide-react";
 
 import { signOutAction } from "@/app/(auth)/actions";
 import { ThemeToggle } from "@/components/theme-toggle";
@@ -14,6 +14,7 @@ const NAV_ITEMS = [
   { href: "/admin", label: "Overview", icon: LayoutDashboard },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/reports", label: "Reports", icon: FileText },
+  { href: "/admin/payments", label: "Payments", icon: Banknote },
   { href: "/admin/transactions", label: "Transactions", icon: CreditCard },
   { href: "/admin/pricing", label: "Pricing", icon: Tags },
 ];

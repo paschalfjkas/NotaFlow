@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { initiateCheckoutAction } from "@/app/dashboard/billing/actions";
+import { initiateBankTransferAction } from "@/app/dashboard/billing/actions";
 import { formatKobo } from "@/lib/payments/format";
 import { Button } from "@/components/ui/button";
 
@@ -11,19 +12,20 @@ export function BillingPackages({
 }: {
   packages: { key: string; name: string; credits: number; price_kobo: number }[];
 }) {
+  const router = useRouter();
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
   function handleBuy(key: string) {
     setLoadingKey(key);
     startTransition(async () => {
-      const result = await initiateCheckoutAction(key);
+      const result = await initiateBankTransferAction(key);
       if ("error" in result) {
         toast.error(result.error);
         setLoadingKey(null);
         return;
       }
-      window.location.href = result.url;
+      router.push(`/dashboard/billing/pay/${result.transactionId}`);
     });
   }
 
@@ -44,7 +46,7 @@ export function BillingPackages({
             disabled={isPending && loadingKey === pkg.key}
             onClick={() => handleBuy(pkg.key)}
           >
-            {isPending && loadingKey === pkg.key ? "Redirecting…" : "Buy Now"}
+            {isPending && loadingKey === pkg.key ? "Starting…" : "Buy Now"}
           </Button>
         </div>
       ))}

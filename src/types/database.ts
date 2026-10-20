@@ -207,6 +207,7 @@ export interface Database {
           credits: number;
           provider: string;
           provider_raw: Record<string, unknown> | null;
+          receipt_storage_path: string | null;
           created_at: string;
           updated_at: string;
         };
@@ -218,6 +219,19 @@ export interface Database {
           credits: number;
         };
         Update: Partial<Database["public"]["Tables"]["transactions"]["Row"]>;
+        Relationships: [];
+      };
+      payment_settings: {
+        Row: {
+          id: string;
+          bank_name: string;
+          account_number: string;
+          account_name: string;
+          instructions: string;
+          updated_at: string;
+        };
+        Insert: Partial<Database["public"]["Tables"]["payment_settings"]["Row"]>;
+        Update: Partial<Database["public"]["Tables"]["payment_settings"]["Row"]>;
         Relationships: [];
       };
       analytics_events: {

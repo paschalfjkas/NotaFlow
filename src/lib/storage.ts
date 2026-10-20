@@ -70,3 +70,7 @@ export function screenshotPath(reportId: string, screenshotId: string, ext: stri
 export function docxPath(reportId: string): string {
   return `exports/${reportId}.docx`;
 }
+
+export function receiptPath(transactionId: string, ext: string): string {
+  return `receipts/${transactionId}.${ext}`;
+}
